@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+gluster volume create vol_disperse disperse {{ disperse_count }} transport tcp \
+{% for host in groups['nodes'] %} {{ host }}:/glusterfs/dispersed/brick {% endfor %}

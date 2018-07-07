@@ -1,0 +1,16 @@
+- name: Peer nodes
+  shell: "gluster peer probe {{ item }}"
+  with_items: "{{ groups['nodes'] }}"
+
+- name: Render create volume script
+  template:
+    src: create-disperse-volume.sh.jinja2
+    dest: /tmp/create-disperse-volume.sh
+
+- name: Create volume
+  shell: bash /tmp/create-disperse-volume.sh
+  ignore_errors: yes
+
+- name: Start volume
+  shell: gluster volume start vol_disperse
+  ignore_errors: yes

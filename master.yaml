@@ -1,0 +1,13 @@
+- hosts: nodes
+  tasks:
+  - include_role:
+      name: nodes
+    tags:
+     - nodes
+
+- hosts: master
+  tasks:
+  - include_role:
+      name: master
+    tags:
+     - master

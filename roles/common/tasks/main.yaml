@@ -1,0 +1,35 @@
+- name: Install GlusterFS release
+  yum:
+    name: centos-release-gluster40
+    state: latest
+
+- name: Install GlusterFS server
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - libsemanage-python
+    - glusterfs-server
+
+- name: Enable glusterd service
+  systemd:
+    name: glusterd
+    state: started
+    enabled: yes
+
+- name: Set SELinux policy
+  seboolean:
+    name: nis_enabled
+    state: on
+    persistent: yes
+
+- name: Config firewalld
+  firewalld:
+    service: glusterfs
+    permanent: true
+    state: enabled
+
+- name: Render hosts
+  template:
+    src: hosts.jinja2
+    dest: /etc/hosts

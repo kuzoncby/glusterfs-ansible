@@ -1,0 +1,30 @@
+- name: "Create partition on {{ gluster_disk }}"
+  parted:
+    device: "{{ gluster_disk }}"
+    number: 1
+    state: present
+  when: create_disk == "true"
+
+- name: "Format disk {{ gluster_disk }}1"
+  filesystem:
+    fstype: "{{ disk_format}}"
+    dev: "{{ gluster_disk }}1"
+  when: create_disk == "true"
+
+- name: Create mount point
+  file:
+    path: /glusterfs/dispersed
+    state: directory
+
+- name: Mount Gluster partition
+  mount:
+    path: /glusterfs/dispersed
+    src: "{{ gluster_disk }}1"
+    fstype: "{{ disk_format}}"
+    opts: "{{ mount_opts }}"
+    state: mounted
+
+- name: Create brick
+  file:
+    path: /glusterfs/dispersed/brick
+    state: directory
