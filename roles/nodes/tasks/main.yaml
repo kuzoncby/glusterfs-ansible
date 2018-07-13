@@ -9,6 +9,7 @@
   filesystem:
     fstype: "{{ disk_format}}"
     dev: "{{ gluster_disk }}1"
+    opts: '-K'
   when: create_disk == "true"
 
 - name: Create mount point

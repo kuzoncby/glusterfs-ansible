@@ -1,7 +1,25 @@
+- name: Setup Full Hostname
+  hostname:
+    name: '{{ inventory_hostname }}'
+
+- name: Disable SELinux
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: Disable firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
 - name: Install GlusterFS release
   yum:
     name: centos-release-gluster40
     state: latest
+
+- name: Config yum address
+  shell: "sed -i 's/mirror.centos.org/{{ centos_yum_mirror }}/g' /etc/yum.repos.d/*"
 
 - name: Install GlusterFS server
   yum:
@@ -16,20 +34,3 @@
     name: glusterd
     state: started
     enabled: yes
-
-- name: Set SELinux policy
-  seboolean:
-    name: nis_enabled
-    state: on
-    persistent: yes
-
-- name: Config firewalld
-  firewalld:
-    service: glusterfs
-    permanent: true
-    state: enabled
-
-- name: Render hosts
-  template:
-    src: hosts.jinja2
-    dest: /etc/hosts
